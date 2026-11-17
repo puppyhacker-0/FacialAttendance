@@ -1,0 +1,16 @@
+# Build output
+target/
+
+# Personal face photos (never commit these)
+src/main/resources/face_*.jpg
+src/main/resources/faces/
+*.model
+*.yml
+
+# Editor and OS files
+.vscode/
+.idea/
+.bloop/
+.metals/
+.DS_Store
+*.class
