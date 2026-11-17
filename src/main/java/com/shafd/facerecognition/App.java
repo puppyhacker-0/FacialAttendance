@@ -29,7 +29,7 @@ public class App {
     /** One sub-folder per person lives here, named after the person. */
     static final String FACES_DIR = "src/main/resources/faces";
 
-    // private static final String REPORT_PATH = "out/attendance_report.pdf"; // used once ReportGenerator exists
+    private static final String REPORT_PATH = "out/attendance_report.pdf";
 
     /** A face must be recognized this many frames in a row before it counts. */
     private static final int CONFIRM_FRAMES = 3;
@@ -161,15 +161,17 @@ public class App {
                 Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, color, 2);
     }
 
-    /**
-     * Prints the result for now.
-     * TODO (Rand's class is not in the repo yet): replace the printing with
-     *     new ReportGenerator().generatePdf(tracker.getRecords(), REPORT_PATH);
-     */
+    /** Prints the result and saves it as a PDF (Rand's ReportGenerator). */
     private void writeReport(AttendanceTracker tracker) {
         System.out.println("--- Attendance result ---");
         for (AttendanceRecord record : tracker.getRecords()) {
             System.out.println(record);
+        }
+        try {
+            new ReportGenerator().generatePdf(tracker.getRecords(), REPORT_PATH);
+            System.out.println("Report saved to " + REPORT_PATH);
+        } catch (RuntimeException e) {
+            System.out.println("Could not save the PDF report: " + e.getMessage());
         }
     }
 
