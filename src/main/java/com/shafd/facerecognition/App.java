@@ -37,7 +37,15 @@ public class App {
     private final CameraCapture camera = new CameraCapture();
     private final FaceDetector detector = new FaceDetector();
     private final FaceRecognizer recognizer = new FaceRecognizer();
+    {
+        // Optional: run with -Dthreshold=80 to loosen recognition without editing code.
+        String t = System.getProperty("threshold");
+        if (t != null) {
+            recognizer.setThreshold(Double.parseDouble(t));
+        }
+    }
     private final AttendanceUI ui = new AttendanceUI();
+    private int debugCounter = 0;
     private final List<Person> roster;
 
     private volatile boolean running = false;
@@ -126,6 +134,10 @@ public class App {
                 Mat crop = detector.crop(frame, faces[i]);
                 who[i] = recognizer.predict(crop);
                 crop.release();
+                if (++debugCounter % 15 == 0) { // prints about twice a second, to help tune the threshold
+                    System.out.printf("closest distance %.1f -> %s%n", recognizer.getLastDistance(),
+                            who[i] == null ? "Unknown" : who[i].getName());
+                }
                 if (who[i] != null) {
                     seen.add(who[i]);
                     if (streaks.merge(who[i], 1, Integer::sum) >= CONFIRM_FRAMES) {
